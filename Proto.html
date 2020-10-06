@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="shortcut icon" href="">
+        <script type='text/javascript' src='https://api.mazemap.com/js/v2.0.24/mazemap.min.js'></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+        <script src="gaugechart.js"></script>
+        <link href="main.css" rel="stylesheet">
+        <link href="seat.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div id = 'labmap'>
+            <div id="roomoccupany">
+                <b style="color: #388cbf; font-size: 24px; font-family: ProximaNova-Medium;text-align: center;padding-left: 5px;">Current occupied seats: </b>
+                <b id='totalcount' style="color: #1d9e4e; font-size: 30px;"></b>
+            </div>
+            <ul id="place">
+            </ul>
+            <div id = "frontdoor_closed" onclick="chartDisplay(event, 'status')">frontdoor</div>
+            <div id = "frontdoor_open" onclick="chartDisplay(event, 'status')">frontdoor</div>
+            <div id = "backdoor_closed" onclick="chartDisplay(event, 'status')">|</div>
+            <div id = "backdoor_open" onclick="chartDisplay(event, 'status')">/</div>
+            <div id = "outdoor_closed" onclick="chartDisplay(event, 'status')">|</div>
+            <div id = "outdoor_open" onclick="chartDisplay(event, 'status')">/</div>
+            <div id = "window1_closed" onclick="chartDisplay(event, 'status')">window1</div>
+            <div id = "window1_open" onclick="chartDisplay(event, 'status')">window1</div>
+            <div id = "window2_closed" onclick="chartDisplay(event, 'status')">window2</div>
+            <div id = "window2_open" onclick="chartDisplay(event, 'status')">window2</div>
+            <div id = "window3_closed" onclick="chartDisplay(event, 'status')">window3</div>
+            <div id = "window3_open" onclick="chartDisplay(event, 'status')">window3</div>
+            <div id = "window4_closed" onclick="chartDisplay(event, 'status')">window4</div>
+            <div id = "window4_open" onclick="chartDisplay(event, 'status')">window4</div>
+        </div>
+        <div id = 'IEQ'>
+            <h3 style="color: #388cbf; font-size: 14px; font-family: ProximaNova-Medium;text-align: center;padding-left: 5px;">IEQ Dashboard</h3>
+            <div style="float: left;">
+                <h3>Temperature</h3>
+                <div id="temgauge"></div>
+            </div>
+            <div style="float: left;">
+                <h3>CO2 level</h3>
+                <div id="co2gauge"></div>
+            </div>
+            <div style="float: left;">
+                <h3>Humidity</h3>
+                <div id="humgauge"></div>
+            </div>
+            <div style="float: left;">
+                <h3>Air Pressure</h3>
+                <div id="pregauge"></div>
+            </div>
+            <div style="float: left;">
+                <h3>Noise level</h3>
+                <div id="noigauge"></div>
+            </div>
+        </div>
+        <div class="hisdata">
+            <button type="button" onclick="dataUpdate(144)">Last 12 hours</button>
+            <button type="button" onclick="dataUpdate(288)">Last 1 day</button>
+            <button type="button" onclick="dataUpdate(864)">Last 3 days</button>
+            &nbsp;&nbsp;&nbsp;
+            <label for="compareCheck">Compare</label> 
+            <input type="checkbox" id="compareCheck" onclick="compareCheck()">
+        </div>
+        <div class="tab">
+            <button class="tablinks" onclick="chartDisplay(event, 'occ')" id="defaultOpen">Occupancy</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'tem')">Temperature</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'co2')">Co2 Level</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'hum')">Humidity</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'pre')">Air Pressure</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'noi')">Noise Level</button>
+            <button class="tablinks" onclick="chartDisplay(event, 'status')">Doors/Windows Status</button>
+        </div>
+        <div class="tab_copy">
+            <button class="tablinks_copy" onclick="compareElement(event)">Occupancy</button>
+            <button class="tablinks_copy" onclick="compareElement(event)">Temperature</button>
+            <button class="tablinks_copy" onclick="compareElement(event)">Co2 Level</button>
+            <button class="tablinks_copy" onclick="compareElement(event)">Humidity</button>
+            <button class="tablinks_copy" onclick="compareElement(event)">Air Pressure</button>
+            <button class="tablinks_copy" onclick="compareElement(event)">Noise Level</button>
+        </div>
+        <div id="occ" class="charts">
+            <div id="occ_chart"></div>
+        </div>
+        <div id="tem" class="charts">
+            <div id="tem_chart"></div>
+        </div>
+        <div id="co2" class="charts">
+            <div id="co2_chart"></div>
+        </div>
+        <div id="hum" class="charts">
+            <div id="hum_chart"></div>
+        </div>
+        <div id="pre" class="charts">
+            <div id="pre_chart"></div>
+        </div>
+        <div id="noi" class="charts">
+            <div id="noi_chart"></div>
+        </div>
+        <div id="status" class="charts">
+            <div id="doorstatus_chart"></div>
+            <div id="windowstatus_chart"></div>
+        </div>
+        <div id="com_chart_area">
+            <div id="compare_chart1" class="com_charts"></div>
+            <div id="compare_chart2" class="com_charts"></div>
+            <div id="compare_chart3" class="com_charts"></div>
+            <div id="compare_chart4" class="com_charts"></div>
+            <div id="compare_chart5" class="com_charts"></div>
+            <div id="compare_chart6" class="com_charts"></div>
+        </div>
+        <div class = "doorcheckbox">
+            <h3>Doors</h3>
+            <label for="frontdoorCheck">frontdoor state</label> 
+            <input type="checkbox" id="frontdoorCheck" class = "statecheckbox" onclick="frontdoorCheck()">
+            <br>
+            <label for="backdoorCheck">backdoor state</label> 
+            <input type="checkbox" id="backdoorCheck" class = "statecheckbox" onclick="backdoorCheck()">
+            <br>
+            <label for="outdoorCheck">outdoor state</label> 
+            <input type="checkbox" id="outdoorCheck" class = "statecheckbox" onclick="outdoorCheck()">
+        </div>
+        <div class = "windowcheckbox">
+            <h3>Windows</h3>
+            <label for="window1Check">window-1 state</label> 
+            <input type="checkbox" id="window1Check" class = "statecheckbox" onclick="window1Check()">
+            <br>
+            <label for="window2Check">window-2 state</label> 
+            <input type="checkbox" id="window2Check" class = "statecheckbox" onclick="window2Check()">
+            <br>
+            <label for="window3Check">window-3 state</label> 
+            <input type="checkbox" id="window3Check" class = "statecheckbox" onclick="window3Check()">
+            <br>
+            <label for="window4Check">window-4 state</label> 
+            <input type="checkbox" id="window4Check" class = "statecheckbox" onclick="window4Check()">
+            <br>
+            <br>
+            <button type="button" onclick="clearfortabswitch()">Uncheck all</button>
+        </div>
+    </body>
+    <script type="text/javascript" src="Proto.js"></script>
+    <script type="text/javascript" src="seat.js"></script>
+</html>
+
+
